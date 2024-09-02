@@ -27,8 +27,8 @@ CREATE TABLE permisos (
 CREATE TABLE usuario_permisos (
     cod_usu_perm SERIAL PRIMARY KEY, --- Clave primaria tabla usuario permisos
     fky_usu INTEGER REFERENCES usuario(cod_usu), -- Clave foránea que referencia a la tabla usuario
-    cod_perm INTEGER REFERENCES permisos(cod_perm), -- Clave foránea que referencia a la tabla permisos
-    PRIMARY KEY (fky_usu, cod_perm), -- Clave primaria de la tabla usuario_permisos
+    fky_perm INTEGER REFERENCES permisos(cod_perm), -- Clave foránea que referencia a la tabla permisos
+    PRIMARY KEY (fky_usu, fky_perm), -- Clave primaria de la tabla usuario_permisos
     est_usu_perm char(1) NOT NULL
 );
 

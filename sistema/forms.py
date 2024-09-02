@@ -95,6 +95,15 @@ class AsignarRolPermisosForm(forms.Form):
         permisos = self.cleaned_data['permisos']
         self.usuario.fky_rol = rol
         self.usuario.save()
-        # Asignar permisos (suponiendo que tienes un campo ManyToMany para permisos en el modelo Usuario)
+        # Asignar permisos (suponiendo que hay un campo M-M para permisos en el modelo Usuario)
         self.usuario.permisos.set(permisos)
         self.usuario.save()
+
+
+class ModificarUsuarioForm(forms.ModelForm):
+    class Meta:
+        model = Usuario
+        fields = ['cor_usu', 'con_usu', 'fky_per', 'fky_rol', 'est_usu']
+        fky_per = forms.ModelChoiceField(queryset=Persona.objects.all(), to_field_name="cod_per")
+        fky_rol = forms.ModelChoiceField(queryset=Rol.objects.all(),to_field_name="cod_rol")
+        

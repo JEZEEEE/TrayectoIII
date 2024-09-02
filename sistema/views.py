@@ -2,9 +2,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .forms import RegistroForm, LoginForm, AsignarRolPermisosForm
+from .forms import RegistroForm, LoginForm, AsignarRolPermisosForm, ModificarUsuarioForm
 from .models import Usuario
 import logging
+from .queries import obtener_usuarios, eliminar_usuario_logicamente, modificar_usuario
 def registro(request):
     if request.method == 'POST':
         form = RegistroForm(request.POST)
@@ -58,3 +59,38 @@ def asignar_roles_permisos(request, usuario_id):
     else:
         form = AsignarRolPermisosForm(usuario=usuario)
     return render(request, 'asignar_roles_permisos.html', {'form': form, 'usuario': usuario})
+
+def listar_usuarios(request):
+    usuarios = obtener_usuarios()
+    print(f"Usuarios obtenidos: {usuarios}")  # Para depuración
+    return render(request, 'listar_usuarios.html', {'usuarios': usuarios})
+
+##def eliminar_usuario(request, cod_usu):
+##    eliminar_usuario_logicamente(cod_usu)
+##    messages.success(request, 'Usuario eliminado correctamente.')
+##    return redirect('listar_usuarios')
+
+def eliminar_usuario(request, cod_usu):
+    eliminar_usuario_logicamente(cod_usu)
+    messages.success(request, 'Usuario eliminado correctamente.')
+    return redirect('listar_usuarios')
+
+
+def modificar_usuario_view(request, cod_usu):
+    usuario = get_object_or_404(Usuario, cod_usu=cod_usu)
+    if request.method == 'POST':
+        form = ModificarUsuarioForm(request.POST, instance=usuario)
+        if form.is_valid():
+            data = form.cleaned_data
+            modificar_usuario(
+                cod_usu,
+                data['cor_usu'],
+                data['con_usu'],
+                data['fky_per'].cod_per,
+                data['fky_rol'].cod_rol,
+                data['est_usu']
+            )
+            return redirect('listar_usuarios')
+    else:
+        form = ModificarUsuarioForm(instance=usuario)
+    return render(request, 'modificar_usuario.html', {'form': form, 'usuario': usuario})
