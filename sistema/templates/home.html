@@ -24,13 +24,16 @@
                     <a class="nav-link" href="#">Inicio</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Productos</a>
+                    <a class="nav-link" href="{% url 'listar_productos' %}">Productos</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Ventas</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Usuarios</a>
+                    <a class="nav-link" href="{% url 'listar_usuarios' %}">Usuarios</a>
+                </li>
+                <li class="nav-item"></li>
+                    <a class="nav-link" href="{% url 'personas_list' %}">Personas</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'logout' %}">Cerrar Sesión</a>
@@ -49,18 +52,18 @@
                     </div>
                     <div class="card-body">
                         <p class="card-text">Administra tus productos.</p>
-                        <a href="#" class="btn btn-primary">Ir a Productos</a>
+                        <a href="{% url 'listar_productos' %}" class="btn btn-primary">Ver Productos</a>
                     </div>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="card mb-4 shadow-sm">
                     <div class="card-header text-center">
-                        Ventas
+                        Personas
                     </div>
                     <div class="card-body">
-                        <p class="card-text">Gestiona tus ventas.</p>
-                        <a href="#" class="btn btn-primary">Ir a Ventas</a>
+                        <p class="card-text">Gestion de personas.</p>
+                        <a href="{% url 'personas_list' %}" class="btn btn-primary">Ir a Personas</a>
                     </div>
                 </div>
             </div>
@@ -70,9 +73,9 @@
                         Usuarios
                     </div>
                     <div class="card-body">
-                        <p class="card-text">Administra los usuarios del sistema.</p>
-                        <a href="{% url 'listar_usuarios' %}" class="btn btn-primary">Ir a Usuarios</a>
-                    </div>
+                        <p class="card-text text-center d-flex justify-content-center">Administra los usuarios del sistema.</p>
+                         <a href="{% url 'listar_usuarios' %}" class="btn btn-primary" >Ir a Usuarios</a>
+                    </div> 
                 </div>
             </div>
         </div>

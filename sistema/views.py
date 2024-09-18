@@ -6,6 +6,12 @@ from .forms import RegistroForm, LoginForm, AsignarRolPermisosForm, ModificarUsu
 from .models import Usuario
 import logging
 from .queries import obtener_usuarios, eliminar_usuario_logicamente, modificar_usuario
+from django.http import HttpResponse
+from reportlab.pdfgen import canvas
+from .models import Usuario
+from django.http import HttpResponse
+from django.template.loader import get_template
+from xhtml2pdf import pisa 
 def registro(request):
     if request.method == 'POST':
         form = RegistroForm(request.POST)
@@ -94,3 +100,29 @@ def modificar_usuario_view(request, cod_usu):
     else:
         form = ModificarUsuarioForm(instance=usuario)
     return render(request, 'modificar_usuario.html', {'form': form, 'usuario': usuario})
+
+
+
+def listar_usuarios_pdf(request):
+    # Obtener todos los usuarios de la base de datos
+    Usuarios = Usuario.objects.all().values('cod_usu', 'cor_usu', 'est_usu')
+
+    # Cargar la plantilla HTML
+    template = get_template('usuarios_pdf.html')
+    context = {'usuarios': Usuarios}
+    
+    # Renderizar la plantilla con los datos
+    html = template.render(context)
+
+    # Crear la respuesta en PDF
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="usuarios.pdf"'
+
+    # Generar el PDF
+    pisa_status = pisa.CreatePDF(html, dest=response)
+
+    # Verificar si hubo errores
+    if pisa_status.err:
+        return HttpResponse('Error al generar el PDF', status=500)
+    
+    return response

@@ -2,11 +2,14 @@ from django import forms
 from .models import Persona, Usuario, Rol, Permiso
 from django.core.exceptions import ValidationError
 from django.core.validators import EmailValidator, MinLengthValidator
+import re
 
 #funciones de validacion del formulario de registro de la persona para el sistema
 def validar_nombre_apellido(value):
     if len(value) < 2:
         raise ValidationError('Debe tener al menos 2 caracteres.')
+    if not re.match("^[a-zA-ZÀ-ÿ\u00f1\u00d1\s]+$", value):
+        raise ValidationError('El nombre solo debe contener letras.')
 
 def validar_contraseña(value):
     if len(value) < 8:

@@ -6,4 +6,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', sistema_views.login_view, name='login'),
     path('sistema/', include('sistema.urls')),
+    path('productos/', include('productos.urls')),
+    path('personas/', include('personas.urls'))
 ]

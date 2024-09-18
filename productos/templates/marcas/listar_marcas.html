@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listado de Marcas</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="mb-4 text-center text-white">Listado de Marcas</h2>
+
+        <a href="{% url 'crear_marca' %}" class="btn btn-primary mb-3">AÑADIR MARCA</a>
+
+
+<!-- filtro de busqueda -->
+<form method="GET" action="{% url 'listar_marcas' %}" id="filtroEstadoForm">
+    <div class="btn-group mb-3" role="group">
+        <button type="submit" name="estado" value="A" class="btn btn-outline-primary {% if request.GET.estado == 'A' %}active{% endif %}">
+            Activo
+        </button>
+        <button type="submit" name="estado" value="I" class="btn btn-outline-secondary {% if request.GET.estado == 'I' %}active{% endif %}">
+            Inactivo
+        </button>
+        <button type="submit" name="estado" value="" class="btn btn-outline-dark {% if request.GET.estado == '' or request.GET.estado == None %}active{% endif %}">
+            Todos
+        </button>
+    </div>
+</form>
+
+
+
+        <table class="table table-striped table-dark table-hover">
+            {% if messages %}
+            <div class="alert alert-success" role="alert">
+                {% for message in messages %}
+                {{ message }}
+                {% endfor %}
+            </div>
+            {% endif %}
+        
+            <thead>
+                <tr>
+                    <th class="text-center">ID</th>
+                    <th class="text-center">Nombre</th>
+                    <th class="text-center">Estado</th>
+                    <th class="text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for marca in marcas %}
+                <tr>
+                    <td class="text-center">{{ marca.cod_mar }}</td>
+                    <td>{{ marca.nom_mar }}</td>
+                    <td class="text-center">{{ marca.est_mar }}</td>
+                    <td class="text-center">
+                        <a href="{% url 'editar_marca' marca.pk %}" class="btn btn-sm btn-primary">Editar</a>
+                        <!-- Botón para abrir el modal de confirmación -->
+                        {% if marca.est_mar == 'A' %}
+                        <!-- Si el estado es 'A' (Activo), mostrar botón de eliminación -->
+                        <a href="#" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteMarca" data-url="{% url 'eliminar_marca' marca.pk %}">Desactivar</a>
+                        {% else %}
+                        <!-- Si el estado es 'I' (Inactivo), deshabilitar botón y mostrar modal de aviso -->
+                        <a href="#" class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#alreadyDeletedModal" disabled>Inactivo</a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center">No se encontraron marcas.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+
+        <!-- Modal de confirmación -->
+        <div class="modal fade" id="confirmDeleteMarca" tabindex="-1" aria-labelledby="confirmDeleteMarcaLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="confirmDeleteMarcaLabel">Confirmar Desactivación</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        ¿Estás seguro de que deseas Desactivar esta marca?<br>
+                        Podrás Activarlo nuevamente editando el "Estado de la Marca"
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <form method="POST" id="deleteForm">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">Desactivar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+            <!-- Modal de Aviso para Producto Eliminado -->
+<div class="modal fade" id="alreadyDeletedModal" tabindex="-1" aria-labelledby="alreadyDeletedModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="alreadyDeletedModalLabel">Aviso</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            Esta marca está inactivo. <br>
+            Dirijase a Editar > Estado de la Marca para Activarla Nuevamente
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+
+
+
+         <div class="d-flex justify-content-center mt-3">
+            <a href="{% url 'listar_productos' %}" class="btn btn-secondary w-25">Volver</a>
+        </div>
+    </div>
+
+
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+
+    <!-- Script para pasar la URL de eliminación al modal -->
+    <script>
+        var confirmDeleteMarca = document.getElementById('confirmDeleteMarca');
+        confirmDeleteMarca.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget; // Botón que activó el modal
+            var url = button.getAttribute('data-url'); // Obtener la URL del botón "Eliminar"
+            
+            var deleteForm = document.getElementById('deleteForm');
+            deleteForm.action = url; // Asignar la URL al formulario
+        });
+    </script>
+
+
+</body>
+</html>
